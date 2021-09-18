@@ -16,7 +16,7 @@ const jokes = [
   { q: 'Im reading a book on the history of glue.', a: 'I just cant seem to put it down.' },
 ];
 
-const responseXML = `
+/* const responseXML = `
     <response>
         <question>${jokes.q}</question>
         <answer>${jokes.a}</answer>
@@ -24,9 +24,9 @@ const responseXML = `
 `;
 
 const getResponse = (request,response,acceptedTypes) => {
-    
-};
 
+};
+*/
 const randomJoke = (max = 1) => {
   const jokesToPrint = [];
   let max2 = Number(max);
