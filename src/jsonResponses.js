@@ -16,17 +16,34 @@ const jokes = [
   { q: 'Im reading a book on the history of glue.', a: 'I just cant seem to put it down.' },
 ];
 
-/* const responseXML = `
+const randomJokeXML = (max = 1) => {
+  const jokesToPrint = [];
+  const max2 = Number(max);
+
+  // store jokes in an array
+  for (let i = 0; i < max2; i++) {
+    jokesToPrint.push(jokes[(Math.floor(Math.random() * jokes.length))]);
+  }
+  const responseXML = `
     <response>
-        <question>${jokes.q}</question>
-        <answer>${jokes.a}</answer>
+        <question>${jokesToPrint.q}</question>
+        <answer>${jokesToPrint.a}</answer>
     </response>
 `;
-
-const getResponse = (request,response,acceptedTypes) => {
-
+  const responseMultipleXML = `
+    <response>
+        <question>${jokesToPrint[0].q}</question>
+        <answer>${jokesToPrint[0].a}</answer>
+        <question>${jokesToPrint[1].q}</question>
+        <answer>${jokesToPrint[1].a}</answer>
+    </response>
+`;
+  if (max2 > 1) {
+    return responseMultipleXML;
+  }
+  return responseXML;
 };
-*/
+
 const randomJoke = (max = 1) => {
   const jokesToPrint = [];
   let max2 = Number(max);
@@ -45,4 +62,20 @@ const getRandomJokeResponse = (request, response, params) => {
   response.end();
 };
 
-module.exports.getRandomJokeResponse = getRandomJokeResponse;
+const getRandomJokeResponseXML = (request, response, params) => {
+  response.writeHead(200, { 'Content-Type': 'text/xml' });
+  response.write(randomJokeXML(params.max));
+  response.end();
+};
+
+const getResponse = (request, response, acceptedTypes, params) => {
+  if (acceptedTypes[0] === 'application/json') {
+    getRandomJokeResponse(request, response, params);
+  } else if (acceptedTypes[0] === 'text/xml') {
+    getRandomJokeResponseXML(request, response, params);
+  } else {
+    getRandomJokeResponse(request, response, params);
+  }
+};
+
+module.exports.getResponse = getResponse;
