@@ -15,9 +15,8 @@ const jokes = [
   { q: 'What lies at the bottom of the ocean and twitches?', a: 'A nervous wreck.' },
   { q: 'Im reading a book on the history of glue.', a: 'I just cant seem to put it down.' },
 ];
-
+const jokesToPrint = [];
 const randomJokeXML = (max = 1) => {
-  const jokesToPrint = [];
   const max2 = Number(max);
 
   // store jokes in an array
@@ -45,7 +44,6 @@ const randomJokeXML = (max = 1) => {
 };
 
 const randomJoke = (max = 1) => {
-  const jokesToPrint = [];
   let max2 = Number(max);
   max2 = !max2 ? 1 : max2;
   max2 = max2 < 1 ? 1 : max2;
@@ -67,14 +65,25 @@ const getRandomJokeResponseXML = (request, response, params) => {
   response.write(randomJokeXML(params.max));
   response.end();
 };
+const getBinarySize = (string) => Buffer.byteLength(string, 'utf8');
 
-const getResponse = (request, response, acceptedTypes, params) => {
-  if (acceptedTypes[0] === 'application/json') {
-    getRandomJokeResponse(request, response, params);
-  } else if (acceptedTypes[0] === 'text/xml') {
-    getRandomJokeResponseXML(request, response, params);
-  } else {
-    getRandomJokeResponse(request, response, params);
+const getResponse = (request, response, acceptedTypes, params, httpMethod) => {
+  if (httpMethod === 'GET') {
+    if (acceptedTypes[0] === 'application/json') {
+      getRandomJokeResponse(request, response, params);
+    } else if (acceptedTypes[0] === 'text/xml') {
+      getRandomJokeResponseXML(request, response, params);
+    } else {
+      getRandomJokeResponse(request, response, params);
+    }
+  } else if (httpMethod === 'HEAD') {
+    const contentLength = getBinarySize(randomJoke(params.max));
+    const headers = {
+      'Content-Type': acceptedTypes,
+      'Content-Length': contentLength,
+    };
+    response.writeHead(200, headers);
+    response.end();
   }
 };
 
