@@ -12,6 +12,7 @@
     },
     "rules": {
         "no-unused-vars": "warn",
-        "no-plusplus": "warn"
+        "no-plusplus": "warn",
+        "no-undef": "warn"
     }
 }

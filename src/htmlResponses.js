@@ -16,11 +16,11 @@ const getCSS = (request, response) => {
   response.end();
 };
 
-const getMainPage = (request,response) => {
-    response.writeHead(200, { 'Content-Type': 'text/html'});
-    response.write(jokePage);
-    response.end();
-}
+const getMainPage = (request, response) => {
+  response.writeHead(200, { 'Content-Type': 'text/html' });
+  response.write(jokePage);
+  response.end();
+};
 
 module.exports.get404Response = get404Response;
 module.exports.getCSS = getCSS;

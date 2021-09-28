@@ -13,26 +13,45 @@ const jsonHandler = require('./jsonResponses');
 // 3 - locally this will be 3000, on Heroku it will be assigned
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-const urlStruct = {
-  '/random-joke': jsonHandler.getResponse,
-  notFound: htmlHandler.get404Response,
-  '/default-styles.css': htmlHandler.getCSS,
-    '/joke-client.html':htmlHandler.getMainPage,
+const handlePost = (request, response, parsedURL) => {
+  if (parsedURL.pathname === '/adduser') {
+    const body = [];
+
+    request.on('error', (err) => {
+      console.dir(error);
+      response.statusCode = 400;
+      response.end();
+    });
+
+    request.on('data', (chunk) => {
+      body.push(chunk);
+    });
+
+    request.on('end', () => {
+      const bodyString = Buffer.concat(body).toString();
+      const bodyParams = query.parse(bodyString);
+
+      jsonHandler.addTeam(request, response, bodyParams);
+    });
+  }
+};
+
+const handleGet = (request, response, parsedUrl) => {
+  if (parsedUrl.pathname === '/style.css') {
+    htmlHandler.getCSS(request, response);
+  } else if (parsedUrl.pathname === '/getTeams') {
+    jsonHandler.getTeams(request, response);
+  } else {
+    htmlHandler.getMainPage(request, response);
+  }
 };
 
 const onRequest = (request, response) => {
-  // console.log(request.headers);
-  const parsedUrl = url.parse(request.url);
-  const { pathname } = parsedUrl;
-  const params = query.parse(parsedUrl.query);
-  let acceptedTypes = request.headers.accept && request.headers.accept.split(',');
-  acceptedTypes = acceptedTypes || [];
-  const httpMethod = request.method;
-  // console.log("params=", params);
-  if (urlStruct[pathname]) {
-    urlStruct[pathname](request, response, acceptedTypes, params, httpMethod);
+  const parsedURL = url.parse(request.url);
+  if (request.method === 'POST') {
+    handlePost(request, response, parsedURL);
   } else {
-    urlStruct.notFound(request, response, params);
+    handleGet(request, response, parsedURL);
   }
 };
 

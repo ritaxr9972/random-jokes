@@ -20,88 +20,103 @@
       }
     </style>
     <script>
-        const handleResponse = (e) => {
-            console.log("e.target =", e.target); //here, 'e.target' is the 'xhr' object
-            console.log("e.target.response = ", e.target.response);//so that means this is a string of "joke JSON"
-            const obj = JSON.parse(e.target.response);//turn it back into an object
-            console.log("obj=",obj);
-            //now go ahead and update #jokeContainer with the contents of the joke
-            document.querySelector("#jokeContainer").innerHTML = `
-            <p>${obj[0].q}</p>
-            <p>${obj[0].a}</p>
-            `;
-                
-        };
         
-        const handle5Response = (e) => {
-            console.log("e.target =", e.target); //here, 'e.target' is the 'xhr' object
-            console.log("e.target.response = ", e.target.response);//so that means this is a string of "joke JSON"
-            const obj = JSON.parse(e.target.response);//turn it back into an object
-            console.log("obj=",obj);
-            //now go ahead and update #jokeContainer with the contents of the joke
-            document.querySelector("#joke5container").innerHTML = `
-            <p>${obj[0].q}</p>
-            <p>${obj[0].a}</p>
-            <p>---------------------------------------------------------</p>
-            <p>${obj[1].q}</p>
-            <p>${obj[1].a}</p>
-            <p>---------------------------------------------------------</p>
-            <p>${obj[2].q}</p>
-            <p>${obj[2].a}</p>
-            <p>---------------------------------------------------------</p>
-            <p>${obj[3].q}</p>
-            <p>${obj[3].a}</p>
-            <p>---------------------------------------------------------</p>
-            <p>${obj[4].q}</p>
-            <p>${obj[4].a}</p>
-            <p>---------------------------------------------------------</p>
-            `;
-                
-        };
-        
-      const downloadJoke = (e) => {
-        // remember that an `Event` object gets passed along every time that an event handler or listener calls a function
-        // the `target` property of that event points at the element that sent the event, in this case a button
-        console.log(`An element of id=${e.target.id} was clicked!`);
-          
-          
-          const jokeURL = "/random-joke";
-          const xhr = new XMLHttpRequest();
-          xhr.onload = handleResponse;
-          xhr.open("GET",jokeURL);
-          //with XHR, after we open a connection, but before we `send()`, we can set 1 or more HTTP request headers
-          //this isn't strictly necessary because "/random-joke" sends JSON by default
-
-          xhr.setRequestHeader('Accept',"application/javascript");
-          xhr.send();
+        	"use strict"; // because I got rid of client-side babel
+    const parseJSON = (xhr, content) => {
+    	if(xhr.response && xhr.getResponseHeader('Content-Type') === 'application/json'){
+      	const obj = JSON.parse(xhr.response);
+      	console.dir(obj);
+      	
+      	if(obj.message){
+      		content.innerHTML += `<p>${obj.message}</p>`;
+      	}
+      }
+    };    
+     
+      const teams = [];
+      
+      
+      const viewTeam = () =>{
+          let check = 0;
+          const namePokemon = document.querySelector("#name").value;
+          const attackPokemon = document.querySelector("#attack").value;
+          let formData = { "name": namePokemon, "attack": attackPokemon};
+          for(let i = 0; i< teams.length; i++){
+              if(teams[i] === JSON.stringify(formData)){
+                  check++;
+              }
+          }
+          if(!namePokemon||!attackPokemon){
+              document.querySelector("#content").innerHTML = `<p>Empty Fields</p>`;
+          }else if(check > 0){
+              document.querySelector("#content").innerHTML = `<p>Cannot repeat Pokemon</p>`;
+          }else{
+          teams.push(JSON.stringify(formData));
+          document.querySelector("#team").innerHTML = teams;    
+          }
+                    
       }
       
-      const download5Joke = (e) => {
-        // remember that an `Event` object gets passed along every time that an event handler or listener calls a function
-        // the `target` property of that event points at the element that sent the event, in this case a button
-        console.log(`An element of id=${e.target.id} was clicked!`);
-          
-          
-          const jokeURL = "/random-joke?max=5";
-          const xhr = new XMLHttpRequest();
-          xhr.onload = handle5Response;
-          xhr.open("GET",jokeURL);
-          //with XHR, after we open a connection, but before we `send()`, we can set 1 or more HTTP request headers
-          //this isn't strictly necessary because "/random-joke" sends JSON by default
-
-          xhr.setRequestHeader('Accept',"application/javascript");
-          xhr.send();
+      const removePokemon = () => {
+          delete teams[team.indexOf(document.querySelector("#name").value)];
+          document.querySelector("#team").innerHTML = teams.attack;
       }
+      
+      const handleResponse = (xhr) => {
+     	
+      const content = document.querySelector('#content');
+       //check the status code
+      switch(xhr.status) {
+        case 200: //success
+          content.innerHTML = `<b>Success</b>`;
+          break;
+        case 201: //created
+          content.innerHTML = '<b>Create</b>';
+          break;
+        case 204: //updated (no response back from server)
+          content.innerHTML = '<b>Updated (No Content)</b>';
+          return;
+        case 400: //bad request
+          content.innerHTML = `<b>Bad Request</b>`;
+          break;
+        default: //any other status code
+          content.innerHTML = `Error code not implemented by client.`;
+          break;
+      }
+       //parse response 
+      parseJSON(xhr, content);
+      
+      
+    };
+
+      const saveTeam = () => {          
+          
+			
+			
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST","/adduser");
+          xhr.setRequestHeader('Accept','application/json');
+          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+          xhr.onload = () => handleResponse(xhr);
+          xhr.send(teams);
+          return false;
+          teams = [];
+          document.querySelector("#team").innerHTML = '';
+      }
+      
+      
       
       const init = () => {
          // An Event *Handler*
         // document.querySelector("#btnJoke").onclick = downloadJoke; // same as below, less typing, use which ever version you prefer
       
-        // An Event *Listener*
-        document.querySelector("#btnJoke").addEventListener("click", downloadJoke);
-          document.querySelector("#btn5joke").addEventListener("click",download5Joke);
+        
       
+          document.querySelector("#add").addEventListener("click",viewTeam);
         // **Actually, event handlers and listeners are NOT exactly the same in all use cases - what ARE the differences?**
+          document.querySelector("#remove").addEventListener("click",removePokemon);
+          
+          document.querySelector("#save").addEventListener("click",saveTeam);
       }
       
       window.onload = init;
@@ -113,20 +128,25 @@
       <h1>Are you ready to LAUGH?</h1>
     </header>
     
+   
     <section>
-      <h2>Just have time for one joke?</h2>
-      <p><button id="btnJoke">Show me a Joke!</button></p>
-      <div id="jokeContainer">
+        <h2>Search your favorite Pokemon</h2>
         
-      </div>
-    </section>
-    
-    <section>
-      <h2>How about 5 jokes?</h2>
-      <p><button id="btn5joke">Show me 5 Jokes!</button></p>
-        <div id="joke5container">
-            
+        <label>Name:</label>
+        <input type="text" id="name">
+        <label>Attack:</label>
+        <input type="text" id="attack">
+        <button id="add">Add pokemon</button>        
+        <button id="remove">Remove Pokemon</button>
+        <button id="save">Save Team</button>
+        <a href="/getTeams">/getTeams</a>
+        
+        
+        
+        <div id="team">
         </div>
+    </section>
+    <section id="content">        
     </section>
     
   </body>
