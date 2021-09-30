@@ -37,12 +37,13 @@
       
       
       const viewTeam = () =>{
+          document.querySelector("#content").innerHTML = " ";
           let check = 0;
           const namePokemon = document.querySelector("#name").value;
           const attackPokemon = document.querySelector("#attack").value;
           let formData = { "name": namePokemon, "attack": attackPokemon};
           for(let i = 0; i< teams.length; i++){
-              if(teams[i] === JSON.stringify(formData)){
+              if(teams[i].name === formData.name){
                   check++;
               }
           }
@@ -51,8 +52,8 @@
           }else if(check > 0){
               document.querySelector("#content").innerHTML = `<p>Cannot repeat Pokemon</p>`;
           }else{
-          teams.push(JSON.stringify(formData));
-          document.querySelector("#team").innerHTML = teams;    
+          teams.push(formData);
+            document.querySelector("#team").innerHTML = teams;   
           }
                     
       }
@@ -89,34 +90,42 @@
       
     };
 
-      const saveTeam = () => {          
+      const saveTeam = (e,nameForm) => {          
           
-			
+          e.preventDefault();
+          const nameAction = nameForm.getAttribute("action");
+          const nameMethod = nameForm.getAttribute("method");
 			
           const xhr = new XMLHttpRequest();
-          xhr.open("POST","/adduser");
+          xhr.open(nameMethod,nameAction);
           xhr.setRequestHeader('Accept','application/json');
           xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
           xhr.onload = () => handleResponse(xhr);
-          xhr.send(teams);
-          return false;
+          xhr.send(JSON.stringify(teams));
           teams = [];
-          document.querySelector("#team").innerHTML = '';
+          return false;
+          
+          
       }
       
-      
-      
+   
       const init = () => {
+          
          // An Event *Handler*
         // document.querySelector("#btnJoke").onclick = downloadJoke; // same as below, less typing, use which ever version you prefer
       
         
       
-          document.querySelector("#add").addEventListener("click",viewTeam);
+          document.querySelector("#addButton").addEventListener("click",viewTeam);
         // **Actually, event handlers and listeners are NOT exactly the same in all use cases - what ARE the differences?**
-          document.querySelector("#remove").addEventListener("click",removePokemon);
+          document.querySelector("#deleteButton").addEventListener("click",removePokemon);
           
-          document.querySelector("#save").addEventListener("click",saveTeam);
+          
+          
+          const nameForm = document.querySelector('#nameForm');
+          const addTeam = (e) => saveTeam(e, nameForm);
+          nameForm.addEventListener('submit', addTeam);
+          //document.querySelector("#save").addEventListener("click",saveTeam);
       }
       
       window.onload = init;
@@ -131,23 +140,22 @@
    
     <section>
         <h2>Search your favorite Pokemon</h2>
-        
-        <label>Name:</label>
-        <input type="text" id="name">
-        <label>Attack:</label>
-        <input type="text" id="attack">
-        <button id="add">Add pokemon</button>        
-        <button id="remove">Remove Pokemon</button>
-        <button id="save">Save Team</button>
+        <form id="nameForm" action="/adduser" method="post">
+        <h2>Add Pokemon</h2>
+        <p>Name:<input id="name"></p>
+        <p>Attack:<input id="attack"></p>
+        <p><button type="button" id = "addButton">Add</button></p>
+        <p><button type="button" id="deleteButton">Delete</button></p>
+        <p><button type="submit">Save Team</button></p>
         <a href="/getTeams">/getTeams</a>
+        </form>
         
         
         
-        <div id="team">
-        </div>
+      </section>
+      <div id="team"></div>
+    <section id="content">
+        
     </section>
-    <section id="content">        
-    </section>
-    
   </body>
 </html>
