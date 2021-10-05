@@ -7,6 +7,7 @@ const url = require('url');
 const query = require('querystring');
 const htmlHandler = require('./htmlResponses');
 const jsonHandler = require('./jsonResponses');
+const mediaHandler = require('./mediaResponses.js');
 
 // 2 - pull in URL and query modules (for URL parsing)
 
@@ -41,7 +42,20 @@ const handleGet = (request, response, parsedUrl) => {
     htmlHandler.getCSS(request, response);
   } else if (parsedUrl.pathname === '/getTeams') {
     jsonHandler.getTeams(request, response);
-  } else {
+  } else if (parsedUrl.pathname === '/mainPage') {
+    htmlHandler.getMainPage(request, response);
+  } else if (parsedUrl.pathname === '/buildTeam') {
+    htmlHandler.getBuildTeam(request, response);
+  } else if (parsedUrl.pathname === '/pikachu') {
+    mediaHandler.getPikachu(request, response);
+  } else if (parsedUrl.pathname === '/pokeball') {
+    mediaHandler.getPokeball(request, response);
+  } else if(parsedUrl.pathname === '/admin') {
+      htmlHandler.getAdmin(request,response);
+  } else if(parsedUrl.pathname === '/get404') {
+      htmlHandler.get404Response(request,response);
+  }
+    else {
     htmlHandler.getMainPage(request, response);
   }
 };

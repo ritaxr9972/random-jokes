@@ -3,21 +3,21 @@
     <title>Joke Client</title>
     <link href="default-styles.css" type="text/css" rel="stylesheet" />
     <style>
-      header{
-        background-color:pink;
-        color: yellow;
-        font-size:2em;
-        padding:1em;
-      }
       
-      h1{
-        font-family: fantasy;
-        filter: drop-shadow(5px 5px 2px #4444dd);
-      }
-      
+       #bodyMain{
+                background-image: url("pokeball");
+                background-color: rgba(255,255,255,0.4);
+                background-blend-mode: lighten;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-position: center;
+            }
       section{
         border-bottom:1px dashed gray;
       }
+        #empty {
+            border-bottom: none;
+        }
     </style>
     <script>
         
@@ -67,23 +67,7 @@
      	
       const content = document.querySelector('#content');
        //check the status code
-      switch(xhr.status) {
-        case 200: //success
-          content.innerHTML = `<b>Success</b>`;
-          break;
-        case 201: //created
-          content.innerHTML = '<b>Create</b>';
-          break;
-        case 204: //updated (no response back from server)
-          content.innerHTML = '<b>Updated (No Content)</b>';
-          return;
-        case 400: //bad request
-          content.innerHTML = `<b>Bad Request</b>`;
-          break;
-        default: //any other status code
-          content.innerHTML = `Error code not implemented by client.`;
-          break;
-      }
+      
        //parse response 
       parseJSON(xhr, content);
       
@@ -133,11 +117,12 @@
     </script>
   </head>
   <body>
-    <header>
-      <h1>Are you ready to LAUGH?</h1>
-    </header>
+    <div id="head" style="border-bottom: 10px solid rgb(42, 117, 187)">
+            <img  src="pikachu" style="width: 150px">
+            <img src="https://fontmeme.com/permalink/211003/23479b3428f3dfd62deb665483fed170.png" alt="pokemon-font" border="0" style="">
+        </div>
     
-   
+   <div id="bodyMain">
     <section>
         <h2>Search your favorite Pokemon</h2>
         <form id="nameForm" action="/adduser" method="post">
@@ -154,8 +139,10 @@
         
       </section>
       <div id="team"></div>
-    <section id="content">
+    <section id="content" style="padding-top: 200px;">
         
     </section>
+    <section id="empty" style="padding-bottom: 400px"></section>
+       </div>
   </body>
 </html>

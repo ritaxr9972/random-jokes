@@ -30,7 +30,7 @@ const addTeam = (request, response, body) => {
 
   const responseCode = 201;
 
-  team.push(body);
+  team.push(JSON.parse(body));
 
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
