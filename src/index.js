@@ -7,7 +7,7 @@ const url = require('url');
 const query = require('querystring');
 const htmlHandler = require('./htmlResponses');
 const jsonHandler = require('./jsonResponses');
-const mediaHandler = require('./mediaResponses.js');
+const mediaHandler = require('./mediaResponses');
 
 // 2 - pull in URL and query modules (for URL parsing)
 
