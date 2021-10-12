@@ -39,10 +39,10 @@ const returnTeamXML = (request,response) => {
     let keysArray = Object.keys(teams);
     let xml = '<response>';
     for(let i =0; i<keysArray.length;i++){
-        xml += '<name>${teams[keysArray[i]].name}</name>';
-        xml += '<team>${teams[keysArray[i]].team}</team>';
+        xml += `<name>${teams[keysArray[i]].name}</name>`;
+        xml += `<team>${JSON.stringify(teams[keysArray[i]].team)}</team>`;
     }
-    xml+= '</respond>';
+    xml+= '</response>';
     respondXML(request,response,200,xml);
 };
 
