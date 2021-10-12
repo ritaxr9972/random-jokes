@@ -3,7 +3,12 @@
     <title>Joke Client</title>
     <link href="default-styles.css" type="text/css" rel="stylesheet" />
     <style>
-      
+        # head div{
+            margin-left: auto;
+            margin-right: auto;
+            
+            text-align: center;
+        }
        #bodyMain{
                 background-image: url("pokeball");
                 background-color: rgba(255,255,255,0.4);
@@ -11,7 +16,11 @@
                 background-repeat: no-repeat;
                 background-attachment: fixed;
                 background-position: center;
+                height: 90%;
             }
+        p{
+            font-size: 20px;
+        }
       section{
         border-bottom:1px dashed gray;
       }
@@ -33,7 +42,7 @@
       }
     };    
      
-      const teams = [];
+      let teams = [];
       
       
       const viewTeam = () =>{
@@ -53,7 +62,7 @@
               document.querySelector("#content").innerHTML = `<p>Cannot repeat Pokemon</p>`;
           }else{
           teams.push(formData);
-            document.querySelector("#team").innerHTML = teams;   
+            document.querySelector("#team").innerHTML = JSON.stringify(teams);   
           }
                     
       }
@@ -79,13 +88,13 @@
           e.preventDefault();
           const nameAction = nameForm.getAttribute("action");
           const nameMethod = nameForm.getAttribute("method");
-			
+          const teamName = document.querySelector("#teamName");
           const xhr = new XMLHttpRequest();
           xhr.open(nameMethod,nameAction);
           xhr.setRequestHeader('Accept','application/json');
-          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+          xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.onload = () => handleResponse(xhr);
-          xhr.send(JSON.stringify(teams));
+          xhr.send(JSON.stringify({TeamName:teamName.value, Team: teams}));
           teams = [];
           return false;
           
@@ -124,9 +133,10 @@
     
    <div id="bodyMain">
     <section>
-        <h2>Search your favorite Pokemon</h2>
+        <h2>Type favorite Pokemon</h2>
         <form id="nameForm" action="/adduser" method="post">
         <h2>Add Pokemon</h2>
+        <p>Team Name:<input id="teamName"></p>
         <p>Name:<input id="name"></p>
         <p>Attack:<input id="attack"></p>
         <p><button type="button" id = "addButton">Add</button></p>

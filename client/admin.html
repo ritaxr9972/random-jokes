@@ -1,6 +1,7 @@
 <html>
     <head>
         <title>Admin</title>
+        <link href="default-styles.css" type="text/css" rel="stylesheet" />
          <style>
             #bodyMain{
                 background-image: url("pokeball");
@@ -9,11 +10,47 @@
                 background-repeat: no-repeat;
                 background-attachment: fixed;
                 background-position: bottom;
+                height: 90%;
             }
-            p{
-                font-size: 20px;
-            }
+             p{
+                 font-size: 20px;
+             }
         </style>
+        <script>
+           const handleResponse =(e) => {
+               const teams = JSON.parse(e.target.response);
+               let s;
+               if(!teams){
+                   s = "<hr><p>No teams saved yet</p>";
+               }
+               if(teams){
+                   let keysArray = Object.keys(teams);
+                   console.log(keysArray);
+                   s = "<hr>";
+                   for(let i = 0;i<keysArray.length ;i++){
+                       s+=`<p>name:${teams[keysArray[i]].name}</p><p>team:${JSON.stringify(teams[keysArray[i]].team)}</p><hr>`;
+                   }
+                   
+               }
+               document.querySelector("#teamsResponse").innerHTML = s;
+           };
+            
+           const downloadTeams = (e) => {
+             const teamsURL = "/getTeams";
+             const xhr = new XMLHttpRequest();
+             xhr.onload = handleResponse;
+               xhr.open("GET",teamsURL);
+               xhr.setRequestHeader('Accept', "application/json");
+               xhr.send();
+               
+           };
+            
+            const init = () => {
+                document.querySelector("#getTeams").addEventListener("click",downloadTeams);
+            }
+            
+            window.onload = init;
+        </script>
     </head>
     <body>
         <div id="head" style="border-bottom: 10px solid rgb(42, 117, 187)">
@@ -22,7 +59,11 @@
         </div>
         <div id="bodyMain">
             <h1>Admin's Page</h1>
-            <p>You change or delete teams already made by users</p>
+            <p>You can delete teams already made by users</p>
+            <button id="getTeams">View Teams</button>
+            <div id="teamsResponse">
+                
+            </div>
         </div>
     </body>
 </html>

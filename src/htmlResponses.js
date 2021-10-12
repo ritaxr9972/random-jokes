@@ -30,10 +30,10 @@ const getBuildTeam = (request, response) => {
   response.end();
 };
 
-const getAdmin = (request,response) => {
-    response.writeHead(200, {'Content-Type': 'text/html'});
-    response.write(adminPage);
-    response.end();
+const getAdmin = (request, response) => {
+  response.writeHead(200, { 'Content-Type': 'text/html' });
+  response.write(adminPage);
+  response.end();
 };
 
 module.exports = {
